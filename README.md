@@ -21,11 +21,11 @@ Vulner is a basic encryption project designed to introduce me to the world of cy
 
 ## Future Development
 This project is ongoing, and I will continue to add new cybersecurity protocols and features to advance its capabilities. 
--Some upcoming features include:
--Implementing additional encryption algorithms.
--Integrating secure authentication and authorization mechanisms.
--Enhancing the web interface with more advanced features.
--Expanding the project to include more advanced cybersecurity concepts.
+**Some upcoming features include:**
+- Implementing additional **encryption** algorithms.
+- Integrating secure **authentication** and **authorization** mechanisms.
+- Enhancing the web interface with more advanced features.
+- Expanding the project to include more advanced **cybersecurity** concepts.
 
 ## Getting Started
 

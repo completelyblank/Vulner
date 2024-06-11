@@ -1,25 +1,93 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<title>Vulner: Encryption Tool</title>
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encryption/Decryption</title>
+	<div id="header">
+		<h1>Vulner</h1>
+		<h2>An Encryption/Decryption Tool...</h2>
+	</div>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-	<div class="container">
-		<h1>Vulner: Encryption Tool</h1>
-		<form id="encryption-form">
-			<input type="text" id="data" placeholder="Enter data to encrypt/decrypt">
-			<select id="encryption-type">
-				<option value="AES">AES</option>
-				<option value="RSA">RSA</option>
-			</select>
-			<button id="encrypt-btn">Encrypt</button>
-			<button id="decrypt-btn">Decrypt</button>
-			<h2>Result:</h2>
-			<div id="result"></div> <!-- Display result here -->
-		</form>
-		<div id="error-message"></div>
-	</div>
+    <form id="encryption-form">
+        <input type="text" id="data" placeholder="Enter data">
+        <select id="encryption-type">
+            <option value="AES">AES</option>
+            <option value="RSA">RSA</option>
+        </select>
+        <button type="submit" id="encrypt-btn">Encrypt</button>
+        <button type="submit" id="decrypt-btn">Decrypt</button>
+    </form>
+    <div id="result"></div>
+    <div id="error-message"></div>
+    <div id="loading-indicator" style="display:none;">Loading...</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        const form = document.getElementById('encryption-form');
+        const dataInput = document.getElementById('data');
+        const encryptionTypeSelect = document.getElementById('encryption-type');
+        const resultDiv = document.getElementById('result');
+        const errorMessageDiv = document.getElementById('error-message');
+        const loadingIndicator = document.getElementById('loading-indicator');
+
+        const validEncryptionTypes = ['AES', 'RSA'];
+
+        function validateEncryptionType() {
+            const encryptionType = encryptionTypeSelect.value;
+            if (!validEncryptionTypes.includes(encryptionType)) {
+                errorMessageDiv.innerText = 'Invalid encryption type';
+                return false;
+            }
+            return true;
+        }
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            errorMessageDiv.innerText = '';
+            resultDiv.innerText = '';
+
+            if (!validateEncryptionType()) {
+                return;
+            }
+
+            const data = dataInput.value.trim();
+            const encryptionType = encryptionTypeSelect.value;
+
+            if (data === '') {
+                errorMessageDiv.innerText = 'Please enter data to encrypt/decrypt';
+                return;
+            }
+
+            if (loadingIndicator != null) {
+                loadingIndicator.style.display = 'block';
+            }
+
+            const endpoint = e.submitter.id === 'encrypt-btn' ? '/encrypt' : '/decrypt';
+            const payload = e.submitter.id === 'encrypt-btn' 
+                ? { data: data, encryptionType: encryptionType } 
+                : { encrypted_data: data, encryptionType: encryptionType };
+
+            axios.post(endpoint, payload)
+                .then((response) => {
+                    if (e.submitter.id === 'encrypt-btn') {
+                        resultDiv.innerText = response.data.encrypted_data;
+                    } else {
+                        resultDiv.innerText = response.data.decrypted_data;
+                    }
+                })
+                .catch((error) => {
+                    console.error('Request Error:', error.response);
+                    errorMessageDiv.innerText = `Error: ${error.response.data.error || error.message}`;
+                })
+                .finally(() => {
+                    if (loadingIndicator != null) {
+                        loadingIndicator.style.display = 'none';
+                    }
+                });
+        });
+    </script>
 </body>
 </html>

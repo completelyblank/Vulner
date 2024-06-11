@@ -1,4 +1,4 @@
-![WhatsApp Image 2024-06-10 at 17 10 23_502952cf](https://github.com/completelyblank/Vulner/assets/105001837/ae430f4a-9fd2-48db-8f1b-c60e2ce09514)
+![image](https://github.com/completelyblank/Vulner/assets/105001837/36a53da5-3013-4695-b8dd-3e02dbfb1963)
 
 # Vulner
 

@@ -11,6 +11,12 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+    <nav id="navbar">
+        <ul>
+            <li><a href="http://127.0.0.1:5000/">Encryption/Decryption</a></li>
+            <li><a href="/password_cracking">Password Cracking</a></li>
+        </ul>
+    </nav>
     <form id="encryption-form">
         <input type="text" id="data" placeholder="Enter data">
         <select id="encryption-type">

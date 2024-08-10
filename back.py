@@ -4,6 +4,7 @@ import traceback
 import hashlib
 import random
 import string
+import logging
 
 app = Flask(__name__)
 
@@ -15,24 +16,30 @@ app.secret_key = 'supersecretkey'  # Change this to a random secret key in produ
 secret_key = Fernet.generate_key()
 cipher_suite = Fernet(secret_key)
 
-@app.route('/encrypt', methods=['POST'])
+# Set up logging
+logging.basicConfig(level=logging.DEBUG)
+
+@app.route('/encrypt', methods=['GET', 'POST'])
 def encrypt():
-    try:
-        data = request.json['data']
-        print('Data to Encrypt:', data)
-        encrypted_data = cipher_suite.encrypt(data.encode())
-        print('Encrypted Data:', encrypted_data.decode())
-        return jsonify({'encrypted_data': encrypted_data.decode()})
-    except Exception as e:
-        print('Encryption Error:', str(e))
-        traceback.print_exc()
-        return jsonify({'error': str(e)}), 500
+    if request.method == 'POST':
+        try:
+            data = request.json['data']
+            logging.debug('Data to Encrypt: %s', data)
+            encrypted_data = cipher_suite.encrypt(data.encode())
+            logging.debug('Encrypted Data: %s', encrypted_data.decode())
+            return jsonify({'encrypted_data': encrypted_data.decode()})
+        except Exception as e:
+            logging.error('Encryption Error: %s', str(e))
+            traceback.print_exc()
+            return jsonify({'error': str(e)}), 500
+
+    return render_template('encrypt.html')
 
 @app.route('/decrypt', methods=['POST'])
 def decrypt():
     try:
         # Log the entire JSON payload received
-        print('Received JSON Payload:', request.json)
+        logging.debug('Received JSON Payload: %s', request.json)
         
         if request.json is None:
             raise ValueError('No JSON payload received')
@@ -41,25 +48,80 @@ def decrypt():
             raise KeyError('encrypted_data key is missing from the payload')
         
         encrypted_data = request.json['encrypted_data']
-        print('Received Encrypted Data:', encrypted_data)
+        logging.debug('Received Encrypted Data: %s', encrypted_data)
         
         decrypted_data = cipher_suite.decrypt(encrypted_data.encode()).decode()
-        print('Decrypted Data:', decrypted_data)
+        logging.debug('Decrypted Data: %s', decrypted_data)
         return jsonify({'decrypted_data': decrypted_data})
     except KeyError as e:
         error_message = f'Missing key in JSON payload: {str(e)}'
-        print('Decryption Error:', error_message)
+        logging.error('Decryption Error: %s', error_message)
         traceback.print_exc()
         return jsonify({'error': error_message}), 400
     except ValueError as e:
         error_message = str(e)
-        print('Decryption Error:', error_message)
+        logging.error('Decryption Error: %s', error_message)
         traceback.print_exc()
         return jsonify({'error': error_message}), 400
     except Exception as e:
-        print('Decryption Error:', str(e))
+        logging.error('Decryption Error: %s', str(e))
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
+
+@app.route('/password_cracking', methods=['GET', 'POST'])
+def password_cracking():
+    if 'hashed_password' not in session:
+        random_password = generate_random_password()
+        hashed_password, salt = generate_hashed_password(random_password)
+        session['hashed_password'] = hashed_password
+        session['original_password'] = random_password
+        session['salt'] = salt
+        logging.debug('Generated new password for the session')
+
+    if request.method == 'POST':
+        if 'password' in request.json:
+            input_password = request.json['password']
+            logging.debug('Received Password: %s', input_password)
+            salt = session['salt']  # Use the salt stored in the session
+            hashed_input = hashlib.sha256((input_password + salt).encode()).hexdigest()
+            logging.debug("Hashed_Input: %s", hashed_input)
+
+            if hashed_input == session['hashed_password']:
+                logging.debug("Password has been cracked.")
+                return jsonify({'message': 'Password has been cracked.', 'password': input_password, 'method': 'Hash Matching'})
+            else:
+                dictionary_path = 'dictionary.txt'  # Path to the dictionary file
+                cracked_password = dictionary_attack(hashed_input, salt, dictionary_path)
+                if cracked_password is not None:
+                    logging.debug("Password has been cracked via dictionary attack.")
+                    return jsonify({'message': 'Password has been cracked via dictionary attack.', 'password': cracked_password, 'method': 'Dictionary Attack'})
+                else:
+                    logging.debug("Failed to crack password.")
+                    return jsonify({'message': 'Failed to crack password.'})
+        else:
+            return jsonify({'error': 'No password provided.'})
+    return render_template('password_cracking.html')
+
+@app.route('/malnysis', methods=['GET', 'POST'])
+def malnysis():
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            return jsonify({'error': 'No file part'}), 400
+        
+        file = request.files['file']
+        if file.filename == '':
+            return jsonify({'error': 'No selected file'}), 400
+        
+        try:
+            file_content = file.read().decode('utf-8')
+        except UnicodeDecodeError:
+            file.seek(0)  # Reset file pointer to the beginning
+            file_content = file.read().decode('latin1')
+        
+        result = scan_file(file_content)
+        return jsonify(result)
+    
+    return render_template('malnysis.html')
 
 @app.route('/static/<path:path>')
 def send_static(path):
@@ -67,7 +129,7 @@ def send_static(path):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('dashboard.html')
 
 def generate_random_password(length=8):
     # Generate a random password
@@ -85,54 +147,27 @@ def generate_hashed_password(password):
     return hashed_password, salt
 
 def dictionary_attack(hash_to_crack, salt, dictionary_file):
-    hashed_words = []
-    words = []
     with open(dictionary_file, 'r') as f:
         for word in f:
             word = word.strip()
             hashed_word = hashlib.sha256((word + salt).encode()).hexdigest()
-            hashed_words.append(hashed_word)
-            words.append(word)
-    for i in range(len(hashed_words)):
-        [print(hashed_words[i])]
-        if hashed_words[i] == hash_to_crack:
-            print("Cracked.")
-            return True
-    return False
+            if hashed_word == hash_to_crack:
+                logging.debug("Cracked.")
+                return word
+    return None
 
-@app.route('/password_cracking', methods=['GET', 'POST'])
-def password_cracking():
-    if 'hashed_password' not in session:
-        random_password = generate_random_password()
-        hashed_password, salt = generate_hashed_password(random_password)
-        session['hashed_password'] = hashed_password
-        session['original_password'] = random_password
-        session['salt'] = salt
-        print('Generated new password for the session')
+def load_signatures():
+    with open('signatures.txt', 'r') as file:
+        signatures = file.read().splitlines()
+    return signatures
 
-    if request.method == 'POST':
-        if 'password' in request.json:
-            input_password = request.json['password']
-            print('Received Password:', input_password)
-            salt = session['salt']  # Use the salt stored in the session
-            hashed_input = hashlib.sha256((input_password + salt).encode()).hexdigest()
-            print("Hashed_Input: ", hashed_input)
+signatures = load_signatures()
 
-            if hashed_input == session['hashed_password']:
-                print("Password has been cracked.")
-                return jsonify({'message': 'Password has been cracked.', 'password': input_password, 'method': 'Hash Matching'})
-            else:
-                dictionary_path = 'dictionary.txt'  # Path to the dictionary file
-                cracked_password = dictionary_attack(hashed_input, salt, dictionary_path)
-                if cracked_password is not None:
-                    print("Password has been cracked via dictionary attack.")
-                    return jsonify({'message': 'Password has been cracked via dictionary attack.', 'password': cracked_password, 'method': 'Dictionary Attack'})
-                else:
-                    print("Failed to crack password.")
-                    return jsonify({'message': 'Failed to crack password.'})
-        else:
-            return jsonify({'error': 'No password provided.'})
-    return render_template('password_cracking.html')
+def scan_file(content):
+    for signature in signatures:
+        if signature in content:
+            return {'result': 'Malware detected.', 'signature': signature}
+    return {'result': 'No malware detected.'}
 
 if __name__ == '__main__':
     app.run(debug=True)

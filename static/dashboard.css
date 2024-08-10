@@ -1,0 +1,87 @@
+/* dashboard.css */
+body {
+    font-family: 'Montserrat', sans-serif;
+    background: url('dash.png') no-repeat center center fixed;
+    background-size: cover;
+    color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+}
+
+.dashboard-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
+
+header {
+    background: rgba(28, 0, 128, 0.511);
+    backdrop-filter: blur(10px); /* Glassy effect */
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin: 0;
+    color: #f0f0f0;
+    animation: fadeIn 2s ease-out;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 0 0;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+nav ul li {
+    display: inline-block;
+}
+
+nav a {
+    display: inline-block;
+    padding: 10px 20px;
+    background: rgba(0, 0, 128, 0.6); 
+    border-radius: 10px;
+    color: #f0f0f0;
+    text-decoration: none;
+    font-size: 1.2rem;
+    transition: background 0.3s ease, color 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+nav a:hover {
+    background: rgba(36, 36, 70, 0.8); /* Darker purple on hover */
+    color: #e0e0e0;
+}
+
+main {
+    flex: 1;
+    padding: 20px;
+    background: rgba(1, 24, 26, 0.5); /* Semi-transparent purple */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    overflow-y: auto;
+}
+
+footer {
+    background: rgba(0, 70, 128, 0.484); /* Purple with opacity */
+    backdrop-filter: blur(10px); /* Glassy effect */
+    padding: 10px;
+    text-align: center;
+    box-shadow: 0 -2px 4px rgba(7, 60, 78, 0.2);
+}
+
+footer p {
+    margin: 0;
+    color: #f0f0f0;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}

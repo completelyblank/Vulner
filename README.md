@@ -1,115 +1,106 @@
-![image](https://github.com/completelyblank/Vulner/assets/105001837/36a53da5-3013-4695-b8dd-3e02dbfb1963)
+![vul](https://github.com/user-attachments/assets/7a144183-0121-4e9c-8a1e-31f9455ccfa9)
 
 # Vulner
 
-Vulner is a basic encryption project designed to introduce me to the world of cyber security. This project demonstrates the implementation of encryption and decryption using Flask, Axios, basic HTML, and CSS. The encryption algorithms used are RSA and AWA, with Flask Cryptography handling the encryption and decryption processes.
+This repository contains a Flask-based web application with features for data encryption, decryption, password cracking, and basic malware analysis. The application also includes logging for debugging purposes.
 
 ## Features
 
-- **Encryption and Decryption**: Implemented using RSA and AWA encryption algorithms.
-- **Web Interface**: Simple and user-friendly interface built with basic HTML and CSS.
-- **Backend**: Flask is used as the web framework for the backend.
-- **Frontend**: Axios is used for making HTTP requests from the frontend to the backend.
+![encrypt](https://github.com/user-attachments/assets/eda53964-4287-4fef-865b-1407bcc9d8b0)
 
-## Technologies Used
+- **Encryption and Decryption**: Encrypt and decrypt sensitive data using the Fernet symmetric encryption method.
+  
+![pass_crack](https://github.com/user-attachments/assets/824f8c56-3b2c-4149-909b-a358b724cf2c)
 
-- **Flask**: A micro web framework for Python.
-- **Axios**: A promise-based HTTP client for the browser and Node.js.
-- **HTML & CSS**: Basic web technologies for building the user interface.
-- **RSA & AWA**: Encryption algorithms used for securing data.
-- **Flask Cryptography**: A library for cryptographic operations within Flask.
+- **Password Cracking**: Simulate password cracking using a dictionary attack and hash matching.
 
-## Future Development
-This project is ongoing, and I will continue to add new cybersecurity protocols and features to advance its capabilities. 
-**Some upcoming features include:**
-- Implementing additional **encryption** algorithms.
-- Integrating secure **authentication** and **authorization** mechanisms.
-- Enhancing the web interface with more advanced features.
-- Expanding the project to include more advanced **cybersecurity** concepts.
+![malnysis](https://github.com/user-attachments/assets/664c7d7c-8284-4b91-b027-4a2a021cc72d)
+  
+- **Malware Analysis**: Analyze uploaded files for malware by scanning their content against known signatures.
 
-## Getting Started
+## Requirements
 
-### Prerequisites
+Before you begin, ensure you have met the following requirements:
 
 - Python 3.x
 - Flask
-- Flask-Cryptography
-- Node.js (for Axios)
+- cryptography
 
-### Installation
+## Installation
 
-1. **Clone the repository**:
-
-    ```bash
-    git clone https://github.com/yourusername/vulner.git
-    cd vulner
-    ```
-
-2. **Create a virtual environment**:
+1. Clone this repository:
 
     ```bash
-    python -m venv venv
-    source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+    git clone https://github.com/yourusername/yourrepositoryname.git
+    cd yourrepositoryname
     ```
 
-3. **Install the required Python packages**:
+2. Install the required packages:
 
     ```bash
-    pip install Flask Flask-Cryptography
+    pip install -r requirements.txt
     ```
 
-4. **Install Axios**:
-
-    If you don't have Node.js and npm installed, download and install them from [Node.js](https://nodejs.org/). Then, install Axios:
+3. Run the Flask application:
 
     ```bash
-    npm install axios
+    python app.py
     ```
 
-### Running the Application
-
-1. **Start the Flask server**:
-
-    ```bash
-    flask run
-    ```
-
-2. **Open your browser and navigate to**:
-
-    ```
-    http://127.0.0.1:5000/
-    ```
+4. Open your browser and navigate to `http://127.0.0.1:5000` to access the application.
 
 ## Usage
 
-1. **Encrypt a message**:
-    - Enter the message you want to encrypt in the provided text box.
-    - Select the encryption algorithm (RSA or AWA).
-    - Click the "Encrypt" button to encrypt the message.
+### Encryption
 
-2. **Decrypt a message**:
-    - Enter the encrypted message in the provided text box.
-    - Select the encryption algorithm (RSA or AWA).
-    - Click the "Decrypt" button to decrypt the message.
+1. Navigate to the `/encrypt` endpoint.
+2. Enter the data you want to encrypt in the provided input field.
+3. Click on the "Encrypt" button to get the encrypted output.
 
-## Project Structure
+### Decryption
 
-vulner/
-├── static/
-│ ├── css/
-│ │ └── styles.css
-│ └── js/
-│ └── app.js
-├── templates/
-│ └── index.html
-├── app.py
-└── README.md
+1. Navigate to the `/decrypt` endpoint.
+2. Enter the encrypted data you want to decrypt in the provided input field.
+3. Click on the "Decrypt" button to get the decrypted output.
 
+### Password Cracking
 
-- **static/**: Contains CSS and JavaScript files.
-- **templates/**: Contains HTML templates.
-- **app.py**: Main Flask application file.
-- **README.md**: Project documentation.
+1. Navigate to the `/password_cracking` endpoint.
+2. Enter a password to simulate a password cracking attempt.
+3. If the password matches the stored hash, you will receive a success message. Otherwise, the application will attempt to crack the password using a dictionary attack.
+
+### Malware Analysis
+
+1. Navigate to the `/malnysis` endpoint.
+2. Upload a file to be scanned for malware.
+3. The application will analyze the file content against known malware signatures and return the result.
+
+## Logging
+
+Logging is set up to help debug and trace the application's behavior. Logs are printed to the console.
+
+## File Structure
+
+- **app.py**: The main Flask application file.
+- **templates/**: HTML files for rendering web pages.
+- **static/**: Static files such as CSS, JavaScript, and images.
+- **dictionary.txt**: A file containing a list of words used for the dictionary attack.
+- **signatures.txt**: A file containing known malware signatures for scanning files.
+
+## Security Considerations
+
+- **Secret Key**: The `app.secret_key` should be changed to a more secure, random value before deploying the application.
+- **Encryption Key**: The encryption key is generated per session. In a production environment, consider securely storing and reusing the key across sessions.
+
+## Contributing
+
+If you want to contribute to this project:
+
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature-branch`).
+3. Make your changes.
+4. Commit and push your changes (`git commit -m 'Add new feature'`).
+5. Create a pull request.
 
 ## License
 
@@ -117,9 +108,5 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Acknowledgements
 
-- Thanks to the Flask and Flask-Cryptography communities for their helpful resources and documentation.
-- Special thanks to the creators of RSA and AWA encryption algorithms.
-
----
-
-Always.
+- [Flask Documentation](https://flask.palletsprojects.com/)
+- [Cryptography Documentation](https://cryptography.io/)

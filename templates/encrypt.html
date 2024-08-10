@@ -4,32 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Encryption/Decryption</title>
-	<div id="header">
-		<h1>Vulner</h1>
-		<h2>An Encryption/Decryption Tool...</h2>
-	</div>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='encrypt.css') }}">
 </head>
 <body>
+    <header id="header">
+        <h1>Vulner</h1>
+        <h2>An Encryption/Decryption Tool...</h2>
+    </header>
     <nav id="navbar">
         <ul>
-            <li><a href="http://127.0.0.1:5000/">Encryption/Decryption</a></li>
-            <li><a href="/password_cracking">Password Cracking</a></li>
+            <li><a href="{{ url_for('index') }}">Home</a></li>
+            <li><a href="{{ url_for('encrypt') }}">Encrypt</a></li>
+            <li><a href="{{ url_for('password_cracking') }}">Password Cracking</a></li>
+            <li><a href="{{ url_for('malnysis') }}">Malware Analysis</a></li>
         </ul>
     </nav>
-    <form id="encryption-form">
-        <input type="text" id="data" placeholder="Enter data">
-        <select id="encryption-type">
-            <option value="AES">AES</option>
-            <option value="RSA">RSA</option>
-        </select>
-        <button type="submit" id="encrypt-btn">Encrypt</button>
-        <button type="submit" id="decrypt-btn">Decrypt</button>
-    </form>
-    <div id="result"></div>
-    <div id="error-message"></div>
-    <div id="loading-indicator" style="display:none;">Loading...</div>
-
+    <main>
+        <form id="encryption-form">
+            <input type="text" id="data" placeholder="Enter data">
+            <select id="encryption-type">
+                <option value="AES">AES</option>
+                <option value="RSA">RSA</option>
+            </select>
+            <div class="button-container">
+                <button type="submit" id="encrypt-btn">Encrypt</button>
+                <button type="submit" id="decrypt-btn">Decrypt</button>
+            </div>
+        </form>
+        <div id="result"></div>
+        <div id="error-message"></div>
+        <div id="loading-indicator" style="display:none;">Loading...</div>
+    </main>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
         const form = document.getElementById('encryption-form');

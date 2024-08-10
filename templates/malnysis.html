@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malware Scanner</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='malnysis.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Malware Scanner</h1>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('encrypt') }}">Encrypt</a></li>
+                <li><a href="{{ url_for('password_cracking') }}">Password Cracking</a></li>
+                <li><a href="{{ url_for('malnysis') }}">Malware Analysis</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="upload-section">
+        <h2>Upload File for Analysis</h2>
+        <form id="upload-form">
+            <input type="file" id="file-input" name="file">
+            <button type="submit">Upload</button>
+        </form>
+        <div id="result"></div>
+    </section>
+
+    <script>
+        document.getElementById('upload-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            var fileInput = document.getElementById('file-input');
+            var file = fileInput.files[0];
+            var formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/malnysis', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                var resultDiv = document.getElementById('result');
+                if (data.error) {
+                    resultDiv.textContent = data.error;
+                } else {
+                    resultDiv.textContent = `${data.result}: ${data.signature ? data.signature : ''}`;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
